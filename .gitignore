@@ -28,3 +28,4 @@ outputs/cv/*/logs/
 .DS_Store
 .vscode/
 *.swp
+~$SULTS_SUMMARY.docx
