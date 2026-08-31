@@ -1,0 +1,77 @@
+# Default configuration. Copy + override per experiment (e.g. configs/exp_A3_probabilistic.yaml).
+
+seed: 42
+frame_rate_hz: 30
+coordinate_convention: "y_up_camera_forward_z"
+
+paths:
+  data_root: "./data"
+  body_models: "./data/body_models"   # SMPL-X + FLAME model files go here after registration
+  output_root: "./outputs"
+  checkpoints: "./outputs/checkpoints"
+
+datasets:
+  beat2:
+    raw_dir: "./data/beat2/raw"
+    converted_dir: "./data/beat2/converted"
+    role: "primary_coupling_train_val"
+  amass:
+    raw_dir: "./data/amass/raw"
+    converted_dir: "./data/amass/converted"
+    role: "body_prior_pretrain"
+  vocaset:
+    raw_dir: "./data/vocaset/raw"
+    converted_dir: "./data/vocaset/converted"
+    role: "face_prior_pretrain"
+  gaze360:
+    raw_dir: "./data/gaze360/raw"
+    converted_dir: "./data/gaze360/converted"
+    role: "gaze_branch_train"
+  bedlam:
+    raw_dir: "./data/bedlam/raw"
+    converted_dir: "./data/bedlam/converted"
+    role: "monocular_initializer_finetune"
+  3dpw:
+    raw_dir: "./data/3dpw/raw"
+    converted_dir: "./data/3dpw/converted"
+    role: "body_eval"
+  human36m:
+    raw_dir: "./data/human36m/raw"
+    converted_dir: "./data/human36m/converted"
+    role: "body_eval_controlled"
+
+model:
+  geometry: "smplx_flame"
+  differentiable_renderer: "pytorch3d"   # alt: "nvdiffrast"
+  coupling_prior_arch: "gru"              # options: "gru", "tcn", "transformer"
+  coupling_output: "diagonal_gaussian"     # mean + log-variance per dim
+
+loss_weights:
+  # Fixed for the first baseline; revisit lambda_couple with a sensitivity sweep (Section 8 of report).
+  key: 1.0
+  face: 1.0
+  gaze: 0.5
+  id: 0.5
+  expr: 0.5
+  sil: 0.0        # off until stress-test stage
+  photo: 0.0       # off until stress-test stage
+  temp: 1.0
+  coll: 0.0         # off in first baseline
+  prior: 0.1
+  couple: 0.0        # 0.0 for B0/B1 baselines; > 0 once coupling is introduced (A2/A3)
+
+optimization:
+  optimizer: "adam"
+  lr: 1e-3
+  refinement_optimizer: "lbfgs"
+  window_length_frames: 60
+  num_stages: 2
+
+training:
+  batch_size: 8
+  num_epochs: 100
+  device: "cuda"   # falls back to "cpu" automatically if unavailable, set explicitly per machine
+
+ablation:
+  # Which configuration this run corresponds to, per Section 11 of the implementation report.
+  id: "A0"   # A0 independent | A1 shared_geometry | A2 deterministic_coupling | A3 probabilistic_coupling

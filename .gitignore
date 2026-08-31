@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+
+# Data -- large, license-restricted, or regeneratable from the scripts in preprocessing/
+data/*/raw/
+data/*/converted/
+data/body_models/
+*.npz
+
+# Model outputs -- checkpoints/logs are large and regeneratable via scripts/train_prior.py;
+# keep the small JSON results summary as a citable, trackable artifact.
+outputs/checkpoints/
+outputs/logs/
+outputs/renders/
+outputs/results/
+outputs/cv/*/checkpoints/
+outputs/cv/*/logs/
+!outputs/cv/cross_validation_results.json
+
+# OS / editor
+.DS_Store
+.vscode/
+*.swp

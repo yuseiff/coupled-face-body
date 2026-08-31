@@ -1,0 +1,38 @@
+name: coupled-face-body
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pyyaml
+  - tqdm
+  - matplotlib
+  - pip:
+      - torch>=2.1
+      - torchvision
+      - pytorch3d          # differentiable rendering (alt: nvdiffrast, see note below)
+      - smplx               # SMPL-X body model
+      - chumpy               # sometimes required by smplx/flame loaders
+      - opencv-python
+      - mediapipe            # 2D landmarks / face mesh / gaze features
+      - trimesh
+      - einops
+      - tensorboard
+      - wandb                 # optional experiment tracking
+      - hydra-core             # optional: cleaner config composition than raw YAML loading
+
+# Notes:
+# - pytorch3d install is finicky and version-locked to your torch/CUDA build; follow the official
+#   instructions for your CUDA version rather than a blind pip install. nvdiffrast is a lighter-weight
+#   alternative if pytorch3d gives install trouble.
+# - SMPL-X model files (.npz/.pkl) and FLAME model files must be downloaded separately after
+#   registering at https://smpl-x.is.tue.mpg.de/ and https://flame.is.tue.mpg.de/ — they are NOT
+#   redistributed via pip due to license terms. Place them under data/body_models/.
+# - VIBE / CLIF / BEV / PIXIE / DECA / EMOCA are separate pretrained-model repos used only for
+#   initialization (Section 4.2 of the implementation report); install them as needed once you reach
+#   Stage 2 (monocular initializer), not on day one.
